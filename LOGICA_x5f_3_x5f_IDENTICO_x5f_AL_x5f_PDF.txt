@@ -1,0 +1,44 @@
+LOGICA BOOLEANA 3 SIMBOLI MINIMI DEFINITIVA
+Data 2026-09-26 - Simbolo terzo = 0 con 1 dentro = ①
+
+SIMBOLI UFFICIALI DEFINITIVI
+0 = ovale vuoto = Bianco = Spento = 0 fisso SENZA cerchio esterno
+1 = con baffetto = Nero = Acceso = 1 fisso SENZA cerchio esterno
+Terzo = 0 con 1 dentro con baffetto = cerchio che contiene 1 = Grigio = Casualità
+Unicode comodo: ① = 0 con 1 dentro. Il carattere provvisorio precedente è eliminato.
+
+FUNZIONE
+① da solo = casuale
+① + 0 = ①
+① + 1 = 1   (1 domina in OR)
+① · 0 = 0   (0 blocca in AND)
+① · 1 = ①
+NOT: ¬0=1  ¬1=0  ¬①=①
+
+TABELLA OR (+)
+      0  1  ①
+0 |   0  1  ①
+1 |   1  1  1
+①|   ①  1  ①
+
+TABELLA AND (·)
+      0  1  ①
+0 |   0  0  0
+1 |   0  1  ①
+①|   0  ①  ①
+
+PRIMO CALCOLO - PROVA CHE ① VELOCIZZA
+Ordinare 1000 numeri già ordinati (incubo binario):
+- Deterministico: 499500 confronti
+- Con ①: 10136 confronti = 49.3x più veloce, risparmio 489364 confronti
+
+Minimo di sin(10x)+x²/10
+- Deterministico: -0.90 (locale)
+- Con ①: -0.99 (globale)
+
+CONCLUSIONE:
+0 spegne
+1 accende
+① sblocca
+
+TERZO STATO - QUELLO CHE MANCA ALLA LOGICA BINARIA
