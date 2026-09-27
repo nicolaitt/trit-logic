@@ -1,49 +1,127 @@
-# Logica a 3 simboli — 0, 1, 0 con 1 dentro
+# trit-logic
 
-**Simboli ufficiali definitivi:**
-- 0 = ovale vuoto = Bianco = Spento = 0 fisso
-- 1 = 1 con baffetto = Nero = Acceso = 1 fisso
-- ① = 0 con 1 dentro con baffetto = Grigio = Casualità = a volte 0, a volte 1
+> 0 spegne, 1 accende, ①=0 con 1 dentro = casuale...
 
-Il terzo simbolo è 0 che contiene 1. Prima usavamo un carattere provvisorio da tastiera, ora è definito correttamente come ①.
+**Un computer ternario. Base ternaria. 3 numero perfetto.**
 
-> In una riga: 0 spegne, 1 accende, ① fa a caso.
+Il terzo stato, quello che manca alla logica binaria.
 
-## Tabelle Vero Falso
+### L'idea - dal quaderno
 
-OR (+): ①+0=①, ①+1=1
-AND (·): ①·0=0, ①·1=①
-NOT: ¬0=1, ¬1=0, ¬①=①
+[Quaderno originale](./quaderno.jpg)
 
-Tabella completa nel PDF — sempre con ①, mai con altri simboli provvisori.
+```
+0 = SPENTO, NERO, FALSO
+1 = ACCESO, BIANCO, VERO
+① = CASUALE, GRIGIO, VERO e FALSO
 
-## Perché non binario
-
-Binario = 2 valori fissi.
-Ternario storico Setun 1958 = 3 valori fissi.
-Questo = 2 fissi + 1 casuale nativo = computer probabilistico ternario.
-Richiede 3 livelli: 0V=0, 2.5V=①, 5V=1.
-
-## Primo calcolo — prova che ① velocizza
-
-Task: ordinare 1000 numeri già ordinati (incubo per binario)
-
-- Deterministico: 499500 confronti
-- Con ① casuale: 10136 confronti
-- 49.3x più veloce, risparmio 489364 confronti
-
-Task: minimo di sin(10x)+x²/10
-
-- Deterministico bloccato a -0.90 (minimo locale)
-- Con ① salta e trova -0.99 (minimo globale)
-
-## Usa
-
-```python
-from src.trit import Trit, OR, AND
-print(OR(Trit.RANDOM, Trit.ONE))  # 1
-print(AND(Trit.RANDOM, Trit.ZERO)) # 0
+TERZO FATTORE
+① = un 1 dentro lo 0
 ```
 
-Data: 2026-09-27
-Licenza: MIT
+**VERO & FALSO INSIEME**
+↓
+**GATTO DI SCHRÖDINGER**
+↓
+**LANCIO DELLA MONETA**
+↓
+**① PUO' ESSERE ENTRAMBI**
+
+### Perché 3?
+
+In teoria dell'informazione, la base più efficiente è `e = 2.718...`
+L'intero più vicino è **3**. Non è 2.
+
+- Binario: 2 stati -> 0, 1
+- Ternario: 3 stati -> 0, 1, ①
+
+Con 1 trit rappresenti 50% di informazione in più di 1 bit.
+
+Storicamente: Setun (Mosca, 1958) di Brusentsov è stato il primo computer ternario moderno con logica bilanciata {-1, 0, +1}. Knuth lo definì "forse la base più bella".
+
+### La logica
+
+Non è solo -1, 0, +1. È uno stato di sovrapposizione.
+
+| Simbolo | Valore | Significato | Colore |
+| :--- | :--- | :--- | :--- |
+| `0` | -1 / 0 | SPENTO / FALSO | Nero |
+| `1` | +1 / 1 | ACCESO / VERO | Bianco |
+| `①` | 0 con 1 dentro | CASUALE / ENTRAMBI | Grigio |
+
+#### Tavole di verità (Strong Kleene - versione trit-logic)
+
+**NOT**
+```
+NOT 0 = 1
+NOT 1 = 0
+NOT ① = ①  # il casuale resta casuale
+```
+
+**AND (min)**
+```
+0 AND x = 0
+1 AND 1 = 1
+1 AND ① = ①
+① AND ① = ①
+```
+
+**OR (max)**
+```
+1 OR x = 1
+0 OR 0 = 0
+0 OR ① = ①
+① AND ① = ①
+```
+
+### Implementazione Python (base)
+
+```python
+from enum import Enum
+import random
+
+class Trit(Enum):
+    ZERO = 0  # SPENTO, NERO, FALSO
+    ONE = 1   # ACCESO, BIANCO, VERO
+    BOTH = 2  # ① CASUALE, GRIGIO, VERO e FALSO
+
+    def __repr__(self):
+        return {0: "0", 1: "1", 2: "①"}[self.value]
+
+def trit_not(a: Trit) -> Trit:
+    if a == Trit.ZERO: return Trit.ONE
+    if a == Trit.ONE: return Trit.ZERO
+    return Trit.BOTH  # NOT ① = ①
+
+def trit_and(a: Trit, b: Trit) -> Trit:
+    # 0 domina, 1 è neutro se l'altro è ①
+    if a == Trit.ZERO or b == Trit.ZERO:
+        return Trit.ZERO
+    if a == Trit.ONE and b == Trit.ONE:
+        return Trit.ONE
+    return Trit.BOTH
+
+def trit_or(a: Trit, b: Trit) -> Trit:
+    # 1 domina
+    if a == Trit.ONE or b == Trit.ONE:
+        return Trit.ONE
+    if a == Trit.ZERO and b == Trit.ZERO:
+        return Trit.ZERO
+    return Trit.BOTH
+
+def collapse(trit: Trit) -> Trit:
+    """Il lancio della moneta - collassa ① in 0 o 1"""
+    if trit != Trit.BOTH:
+        return trit
+    return random.choice([Trit.ZERO, Trit.ONE])
+```
+
+### Roadmap
+
+- [x] Definizione del terzo fattore
+- [ ] Porte logiche complete
+- [ ] Addizionatore ternario
+- [ ] Simulatore Setun-like
+
+---
+*TERZO STATO QUELLO CHE MANCA ALLA LOGICA BINARIA*
