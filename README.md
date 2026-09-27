@@ -8,7 +8,7 @@ Il terzo stato, quello che manca alla logica binaria.
 
 ### L'idea - dal quaderno
 
-[Quaderno originale](./quaderno.jpg)
+[Quaderno originale](./quaderno.jpeg)
 
 ```
 0 = SPENTO, NERO, FALSO
